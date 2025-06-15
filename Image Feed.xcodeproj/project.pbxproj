@@ -22,7 +22,6 @@
 		8FB291B92902DA2100A53129 /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB291B82902DA2100A53129 /* OAuth2Service.swift */; };
 		8FB291BB2902DA4C00A53129 /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB291BA2902DA4C00A53129 /* OAuth2TokenStorage.swift */; };
 		8FB291BE2902DAB100A53129 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB291BD2902DAB100A53129 /* SplashViewController.swift */; };
-		E5431DCD2DF0DA370086E0FF /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5431DCC2DF0DA370086E0FF /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +42,6 @@
 		8FB291B82902DA2100A53129 /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
 		8FB291BA2902DA4C00A53129 /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
 		8FB291BD2902DAB100A53129 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
-		E5431DCC2DF0DA370086E0FF /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +49,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5431DCD2DF0DA370086E0FF /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				7D9CFA4128DDEE7F00D971A7 /* Image Feed */,
-				E5431DCB2DF0DA370086E0FF /* Frameworks */,
 				7D9CFA4028DDEE7F00D971A7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -154,14 +150,6 @@
 			path = SplashViewController;
 			sourceTree = "<group>";
 		};
-		E5431DCB2DF0DA370086E0FF /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				E5431DCC2DF0DA370086E0FF /* WebKit.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -190,7 +178,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1340;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					7D9CFA3E28DDEE7F00D971A7 = {
 						CreatedOnToolsVersion = 13.4.1;
@@ -306,7 +294,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -367,7 +354,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -407,7 +393,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "aliverdiyev24-icloud.com";
+				PRODUCT_BUNDLE_IDENTIFIER = aliverdiyev.icloud;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -436,7 +422,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "aliverdiyev24-icloud.com";
+				PRODUCT_BUNDLE_IDENTIFIER = aliverdiyev.icloud;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

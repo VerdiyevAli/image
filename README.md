@@ -1,3 +1,0 @@
-# imageFeed-main
-# image
-# image
