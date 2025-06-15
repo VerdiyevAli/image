@@ -10,9 +10,10 @@ enum Constants {
             }
             return url
         }()
-        static let accessScope = "public+read_user+write_likes"
+        
+        static let accessKey = "S-5kWb2JOLUERhUrddgO58BjdEnONLIyd4AdprXnc5U"
+        static let secretKey = "PARV2GUTX3j9pZAuNqFJqxmIWsf0ezMF9lyRAhqGyrI"
         static let redirectURI = "urn:ietf:wg:oauth:2.0:oob"
-        static let secretKey = "_dG6ylkUDpwmL0mK_b4Ym-fUXm3GFE1l5S0YU1XkfIA"
-        static let accessKey = "tnZWP4_QOjUChKVUe-Sp4dAUJUXTv2oFisJDfZ39OD8"
+        static let accessScope = "public+read_user+write_likes"
     }
 }
