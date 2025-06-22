@@ -1,7 +1,7 @@
- import UIKit
+
+import UIKit
 
 extension UIColor {
-    
     static var ypLightBlack: UIColor {UIColor(named: "#1A1B22") ?? UIColor.black }
     static var ypBlack: UIColor {UIColor(named: "#1A1B2280(50%)") ?? UIColor.black }
     static var ypBlue: UIColor {UIColor(named: "#3772E7") ?? UIColor.blue}

@@ -16,7 +16,7 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var scrollView: UIScrollView!
     @IBOutlet private weak var shareButton: UIButton!
-        
+    
     // MARK: - Private properties
     private var initialZoomScale: CGFloat = 1.0
     
