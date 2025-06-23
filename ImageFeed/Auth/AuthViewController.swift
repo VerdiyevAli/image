@@ -1,9 +1,5 @@
 import UIKit
 
-protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
-}
-
 class AuthViewController: UIViewController {
     //MARK: - Delegate
     weak var delegate: AuthViewControllerDelegate?
@@ -34,7 +30,8 @@ class AuthViewController: UIViewController {
     
     //MARK: - Private properties
     private let oauth2Service = OAuth2Service.shared
-    private let idWebVC = "WebViewViewControllerID"
+    private lazy var errorAlert = AlertPresenter(viewController: self)
+    
     
     //MARK: - Life cycle
     override func viewDidLoad() {
@@ -81,11 +78,12 @@ class AuthViewController: UIViewController {
     
     //MARK: - Action
     @objc private func didTapActiveButton(){
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let webViewVC = storyboard.instantiateViewController(withIdentifier: idWebVC) as? WebViewViewController {
-            webViewVC.delegate = self
-            navigationController?.pushViewController(webViewVC, animated: true)
-        }
+        let webViewVC = WebViewViewController()
+        webViewVC.delegate = self
+        
+        let navigationController = UINavigationController(rootViewController: webViewVC)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
 }
 
@@ -94,14 +92,24 @@ extension AuthViewController: WebViewViewControllerDelegate {
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true, completion: nil)
+        UIBlockingProgressHUD.show()
         
-        oauth2Service.fetchOAuthToken(code: code) { result in
+        oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
             case .success(let token):
                 OAuth2TokenStorage.storage.token = token
                 self.delegate?.didAuthenticate(self)
-            case .failure(let error): print("Ошибка получения токена: \(error)")
+            case .failure(let error):
+                print("Ошибка получения токена: \(error)")
+                let alertModel = AlertModel(title: "Что-то пошло не так(",
+                                            message: "Не удалось войти в систему",
+                                            buttonText: "OK",
+                                            completion: nil)
+                errorAlert.showAlert(with: alertModel)
             }
+            UIBlockingProgressHUD.dismiss()
         }
     }
     
