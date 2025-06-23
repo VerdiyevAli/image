@@ -10,14 +10,16 @@ final class SplashViewController: UIViewController {
     }()
     
     //MARK: - Private properties
-    private let idAuthViewController = "showAuthVCID"
-    private let idTabBarControllerScene = "TabBarViewController"
+    private let profileService = ProfileService.shared
+    private let storage = OAuth2TokenStorage.storage
+    private lazy var showErrorAlert = AlertPresenter(viewController: self)
     
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypLightBlack
         configureConstraintsSplashImage()
+        handleAuthorizationFlow()
     }
     
     // MARK: - Override methods
@@ -40,19 +42,23 @@ final class SplashViewController: UIViewController {
         ])
     }
     
+    private func handleAuthorizationFlow() {
+        if let token = storage.token {
+            fetchProfile(token: token)
+        } else {
+            validateAuthorization()
+        }
+    }
+    
     private func validateAuthorization(){
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        
         if OAuth2TokenStorage.storage.token != nil {
             print("Токен прошел авторизацию")
             switchToTabBarController()
         } else {
             print("Токен отсутствует, переход на AuthViewController")
-            if let authViewController = storyboard.instantiateViewController(withIdentifier: idAuthViewController) as? AuthViewController {
-                print("Переход на AuthViewController")
-                authViewController.delegate = self
-                navigationController?.pushViewController(authViewController, animated: true)
-            }
+            let authViewController = AuthViewController()
+            authViewController.delegate = self
+            navigationController?.pushViewController(authViewController, animated: true)
         }
     }
     
@@ -62,16 +68,45 @@ final class SplashViewController: UIViewController {
             return
         }
         
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: idTabBarControllerScene)
+        let tabBarController = TabBarController()
+        print("Переход на \(TabBarController.identifier)")
         
         window.rootViewController = tabBarController
+    }
+    
+    private func fetchProfile(token: String) {
+        UIBlockingProgressHUD.show()
+        profileService.fetchProfile { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let profile):
+                let username = profile.userName
+                ProfileImageService.shared.fetchProfileImageURL(username: username) { _ in
+                    print("fetchProfileImageURL завершился с результатом: \(result)")
+                }
+                self.switchToTabBarController()
+            case .failure(let error):
+                print("Ошибка при загрузке профиля: \(error)")
+                let alertModel = AlertModel(title: "Ошибка",
+                                            message: "Не удалось загрузить профиль: \(error.localizedDescription)",
+                                            buttonText: "OK",
+                                            completion: nil)
+                showErrorAlert.showAlert(with: alertModel)
+            }
+        }
     }
 }
 
 //MARK: - Extension
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
-        switchToTabBarController()
+        vc.dismiss(animated: true)
+        guard let token = storage.token else {
+            return
+        }
+        fetchProfile(token: token)
     }
 }

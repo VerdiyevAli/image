@@ -1,12 +1,14 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    // MARK: - Private lazy properties
-    
+    // MARK: - Private properties
     private lazy var avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
         let avatarImageView = UIImageView(image: avatarImage)
+        avatarImageView.contentMode = .scaleAspectFill
+        avatarImageView.clipsToBounds = true
         return avatarImageView
     }()
     
@@ -47,10 +49,29 @@ final class ProfileViewController: UIViewController {
         return logoutButton
     }()
     
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
+    //MARK: - Deinit
+    deinit {
+        if let observer = profileImageServiceObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        updateProfileDetails()
+        addProfileImageObserver()
+        updateAvatar()
+    }
+    
+    //MARK: - Override methods
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        avatarImageView.layer.cornerRadius = avatarImageView.frame.width / 2
     }
     
     // MARK: - Private methods
@@ -117,6 +138,37 @@ final class ProfileViewController: UIViewController {
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26),
             logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor)
         ])
+    }
+    
+    private func updateProfileDetails() {
+        if let profile = profileService.profile {
+            print("Profile loaded: \(profile.name), \(profile.loginName), \(String(describing: profile.bio))")
+            nameLabel.text = profile.name
+            loginNameLabel.text = profile.loginName
+            descriptionLabel.text = profile.bio
+            updateAvatar()
+        } else {
+            print("Профиль не загружен")
+        }
+    }
+    
+    private func updateAvatar(){
+        guard let profileImageURL = ProfileImageService.shared.avatarURL, let updateUrl = URL(string: profileImageURL) else {
+            print("Ошибка: avatarURL отсутствует или невалидный")
+            return
+        }
+        print("Обновляем аватар: \(updateUrl.absoluteString)")
+        avatarImageView.kf.setImage(with: updateUrl, placeholder: UIImage(named: "PlaceholderAvatar"))
+    }
+    
+    private func addProfileImageObserver(){
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateAvatar()
+        }
     }
     
     //MARK: - Action

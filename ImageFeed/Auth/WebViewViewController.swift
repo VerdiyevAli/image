@@ -1,8 +1,6 @@
 import UIKit
 @preconcurrency import WebKit
 
-
-
 final class WebViewViewController: UIViewController, WKUIDelegate {
     //MARK: - Enum
     enum WebViewConstants {
@@ -12,7 +10,7 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
     //MARK: - Delegate
     weak var delegate: WebViewViewControllerDelegate?
     
-    // MARK: - Private lazy properties
+    // MARK: - Private properties
     private lazy var webView: WKWebView = {
         let webView = WKWebView()
         webView.backgroundColor = .ypWhite
@@ -29,6 +27,15 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
         return progressView
     }()
     
+    private lazy var backAuthVCButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "navBackButton"), for: .normal)
+        button.addTarget(self, action: #selector(didTapBackAuthVCButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    
     //MARK: - Life cycle
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -37,8 +44,11 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
         loadAuthView()
         configureProgressView()
         
+        let backButton = UIBarButtonItem(customView: backAuthVCButton)
+        navigationItem.leftBarButtonItem = backButton
+        
+        addEstimatedProgressObservation()
         webView.navigationDelegate = self
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
     }
     
     // MARK: - Override methods
@@ -57,7 +67,8 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
     
     //MARK: - Deinit
     deinit {
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
+        guard let estimatedProgressObservation = estimatedProgressObservation else { return }
+        estimatedProgressObservation.invalidate()
     }
     
     // MARK: - Private methods
@@ -68,7 +79,7 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
             webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
@@ -100,6 +111,22 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
     private func updateProgress(){
         progressView.progress = Float(webView.estimatedProgress)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+    }
+    
+    private func addEstimatedProgressObservation(){
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: {[weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             }
+        )
+    }
+    
+    @objc
+    private func didTapBackAuthVCButton(){
+        delegate?.webViewViewControllerDidCancel(self)
     }
 }
 
