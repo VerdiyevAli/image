@@ -2,6 +2,9 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
+    // MARK: - @IBOutlet properties
+    @IBOutlet private var tableView: UITableView!
+    
     //MARK: - Private variables
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
     private let currentDate = Date()
@@ -13,10 +16,6 @@ final class ImagesListViewController: UIViewController {
         formatter.timeStyle = .none
         return formatter
     }()
-    
-    // MARK: - @IBOutlet properties
-    @IBOutlet private var tableView: UITableView!
-    
     
     //MARK: - Life cycle
     override func viewDidLoad() {
