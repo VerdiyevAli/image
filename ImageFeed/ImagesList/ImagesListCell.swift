@@ -8,13 +8,11 @@ final class ImagesListCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 16
         imageView.layer.masksToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var likeButton: UIButton = {
         let likeButton = UIButton()
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
         return likeButton
     }()
     
@@ -22,7 +20,6 @@ final class ImagesListCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textColor = .ypWhite
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -47,11 +44,16 @@ final class ImagesListCell: UITableViewCell {
     }
     
     // MARK: - Private methods
+    private func addSubviews() {
+        [cellImage, likeButton, dateLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }
+    }
+    
     private func setupCell(){
         contentView.clipsToBounds = true
-        contentView.addSubview(cellImage)
-        contentView.addSubview(likeButton)
-        contentView.addSubview(dateLabel)
+        addSubviews()
         
         NSLayoutConstraint.activate([
             cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),

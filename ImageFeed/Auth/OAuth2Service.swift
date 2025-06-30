@@ -18,7 +18,7 @@ final class OAuth2Service {
     func makeOAuthTokenRequest(code: String) -> Result<URLRequest, OAuthTokenRequestError> {
         guard let baseURL = URL(string: "https://unsplash.com") else {
             print("Ошибка: Неверный базовый URL")
-            return.failure(.invalidBaseURL)
+            return .failure(.invalidBaseURL)
         }
         guard let url = URL(
             string: "/oauth/token"
@@ -30,12 +30,12 @@ final class OAuth2Service {
             relativeTo: baseURL
         ) else {
             print("Ошибка: Неверный URL")
-            return.failure(.invalidURL)
+            return .failure(.invalidURL)
         }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        return.success(request)
+        return .success(request)
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -72,7 +72,7 @@ final class OAuth2Service {
             self.task = task
             task.resume()
             
-        case.failure(let error):
+        case .failure(let error):
             print("Ошибка создания запроса fetchOAuthToken: \(error)")
             completion(.failure(error))
         }

@@ -1,6 +1,7 @@
 import Foundation
 
 struct Profile {
+    let id: String
     let userName: String
     let firstName: String
     let lastName: String
@@ -9,6 +10,7 @@ struct Profile {
     let bio: String?
     
     init(from profileResult: ProfileResult) {
+        self.id = profileResult.id
         self.userName = profileResult.username
         self.firstName = profileResult.firstName
         self.lastName = profileResult.lastName

@@ -141,18 +141,19 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateProfileDetails() {
-        if let profile = profileService.profile {
-            print("Profile loaded: \(profile.name), \(profile.loginName), \(String(describing: profile.bio))")
-            nameLabel.text = profile.name
-            loginNameLabel.text = profile.loginName
-            descriptionLabel.text = profile.bio
-            updateAvatar()
-        } else {
+        guard let profile = profileService.profile else {
             print("Профиль не загружен")
+            return
         }
+
+        print("Profile loaded: \(profile.name), \(profile.loginName), \(String(describing: profile.bio))")
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+        updateAvatar()
     }
     
-    private func updateAvatar(){
+    private func updateAvatar() {
         guard let profileImageURL = ProfileImageService.shared.avatarURL, let updateUrl = URL(string: profileImageURL) else {
             print("Ошибка: avatarURL отсутствует или невалидный")
             return

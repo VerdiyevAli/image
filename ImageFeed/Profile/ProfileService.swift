@@ -18,7 +18,7 @@ final class ProfileService {
         
         guard let url = URL(string: "me", relativeTo: Constants.defaultBaseURL) else {
             print("Ошибка: Неверный URL ProfileRequest")
-            return.failure(.invalidBaseURL)
+            return .failure(.invalidBaseURL)
         }
         
         var request = URLRequest(url: url)
@@ -46,6 +46,7 @@ final class ProfileService {
         switch makeProfileRequest(token: token){
         case .failure(let error):
             print("Ошибка создания запроса makeProfileRequest: \(error)")
+            completion(.failure(.urlRequestError(error)))
             isFetching = false
         case .success(let request):
             let task = urlSession.objectTask(for: request){ [weak self] (result: Result<ProfileResult, Error>) in

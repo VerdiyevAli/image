@@ -1,6 +1,6 @@
 import UIKit
 
-class AuthViewController: UIViewController {
+final class AuthViewController: UIViewController {
     //MARK: - Delegate
     weak var delegate: AuthViewControllerDelegate?
     

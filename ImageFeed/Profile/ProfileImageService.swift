@@ -20,7 +20,7 @@ final class ProfileImageService {
     func makeProfileImageRequest(username: String, token: String) -> Result<URLRequest, OAuthTokenRequestError> {
         guard let url = URL(string: "users/\(username)", relativeTo: Constants.defaultBaseURL) else {
             print("Ошибка: Неверный URL ProfileImageRequest")
-            return.failure(.invalidBaseURL)
+            return .failure(.invalidBaseURL)
         }
 
         var request = URLRequest(url: url)
@@ -80,7 +80,6 @@ final class ProfileImageService {
                             userInfo: ["URL": profileImageURL]
                         )
                         
-                        self.avatarURL = profileImageURL
                         completion(.success(profileImageURL))
                         
                     case .failure(let error):
