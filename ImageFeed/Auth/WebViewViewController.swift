@@ -1,10 +1,3 @@
-//
-//  WebViewViewController.swift
-//  ImageFeed
-//
-//  Created by Алина on 16.02.2025.
-//
-
 import UIKit
 @preconcurrency import WebKit
 

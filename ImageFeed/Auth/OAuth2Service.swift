@@ -1,9 +1,3 @@
-//
-//  OAuth2Service.swift
-//  ImageFeed
-//
-//  Created by Алина on 20.02.2025.
-//
 import Foundation
 
 final class OAuth2Service {

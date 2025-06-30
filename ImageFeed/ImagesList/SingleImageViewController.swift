@@ -1,10 +1,3 @@
-//
-//  SingleImageViewController.swift
-//  ImageFeed
-//
-//  Created by Алина on 03.02.2025.
-//
-
 import UIKit
 import ProgressHUD
 import Kingfisher

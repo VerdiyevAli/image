@@ -1,10 +1,3 @@
-//
-//  AlertPresenter.swift
-//  ImageFeed
-//
-//  Created by Алина on 22.03.2025.
-//
-
 import UIKit
 
 final class AlertPresenter: AlertPresenterProtocol {

@@ -1,12 +1,4 @@
-//
-//  Profile.swift
-//  ImageFeed
-//
-//  Created by Алина on 27.03.2025.
-//
-import Foundation
-
-struct Profile {
+ struct Profile {
     let userName: String
     let firstName: String
     let lastName: String

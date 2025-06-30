@@ -1,10 +1,3 @@
-//
-//  UserResult.swift
-//  ImageFeed
-//
-//  Created by Алина on 27.03.2025.
-//
-
 import Foundation
 
 struct UserResult: Codable {

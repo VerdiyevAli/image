@@ -1,10 +1,3 @@
-//
-//  OAuthTokenRequestError.swift
-//  ImageFeed
-//
-//  Created by Алина on 22.03.2025.
-//
-
 //MARK: - Enums
 enum OAuthTokenRequestError: Error {
     case invalidBaseURL

@@ -1,11 +1,3 @@
-//
-//  PhotoResult.swift
-//  ImageFeed
-//
-//  Created by Алина on 28.03.2025.
-//
-
-
 import Foundation
 
 struct PhotoResult: Codable {

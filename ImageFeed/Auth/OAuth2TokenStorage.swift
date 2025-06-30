@@ -1,9 +1,3 @@
-//
-//  OAuth2TokenStorage.swift
-//  ImageFeed
-//
-//  Created by Алина on 22.02.2025.
-//
 import Foundation
 import SwiftKeychainWrapper
 

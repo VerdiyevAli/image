@@ -1,10 +1,3 @@
-//
-//  ProfileImageService.swift
-//  ImageFeed
-//
-//  Created by Алина on 09.03.2025.
-//
-
 import Foundation
 import Kingfisher
 
