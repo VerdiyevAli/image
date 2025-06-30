@@ -1,3 +1,10 @@
+//
+//  SplashViewController.swift
+//  ImageFeed
+//
+//  Created by Алина on 22.02.2025.
+//
+
 import UIKit
 
 final class SplashViewController: UIViewController {
@@ -58,7 +65,8 @@ final class SplashViewController: UIViewController {
             print("Токен отсутствует, переход на AuthViewController")
             let authViewController = AuthViewController()
             authViewController.delegate = self
-            navigationController?.pushViewController(authViewController, animated: true)
+            authViewController.modalPresentationStyle = .fullScreen
+            present(authViewController, animated: true)
         }
     }
     
@@ -89,11 +97,13 @@ final class SplashViewController: UIViewController {
                 }
                 self.switchToTabBarController()
             case .failure(let error):
-                print("Ошибка при загрузке профиля: \(error)")
+                print("❌ Ошибка при загрузке профиля: \(error)")
                 let alertModel = AlertModel(title: "Ошибка",
                                             message: "Не удалось загрузить профиль: \(error.localizedDescription)",
                                             buttonText: "OK",
-                                            completion: nil)
+                                            completion: nil,
+                                            secondButtonText: nil,
+                                            secondButtonCompletion: nil)
                 showErrorAlert.showAlert(with: alertModel)
             }
         }

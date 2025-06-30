@@ -1,3 +1,10 @@
+//
+//  ProfileViewController.swift
+//  ImageFeed
+//
+//  Created by Алина on 01.02.2025.
+//
+
 import UIKit
 import Kingfisher
 
@@ -40,7 +47,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     private lazy var logoutButton: UIButton = {
-        let logoutButton = UIButton(type: .system)
+        let logoutButton = UIButton(type: .custom)
         if let exitImage = UIImage(named: "Exit"){
             logoutButton.setImage(exitImage, for: .normal)
         }
@@ -51,6 +58,7 @@ final class ProfileViewController: UIViewController {
     
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
+    private lazy var errorAlert = AlertPresenter(viewController: self)
     
     //MARK: - Deinit
     deinit {
@@ -141,21 +149,20 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateProfileDetails() {
-        guard let profile = profileService.profile else {
+        if let profile = profileService.profile {
+            print("Profile loaded: \(profile.name), \(profile.loginName), \(String(describing: profile.bio))")
+            nameLabel.text = profile.name
+            loginNameLabel.text = profile.loginName
+            descriptionLabel.text = profile.bio
+            updateAvatar()
+        } else {
             print("Профиль не загружен")
-            return
         }
-
-        print("Profile loaded: \(profile.name), \(profile.loginName), \(String(describing: profile.bio))")
-        nameLabel.text = profile.name
-        loginNameLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio
-        updateAvatar()
     }
     
-    private func updateAvatar() {
+    private func updateAvatar(){
         guard let profileImageURL = ProfileImageService.shared.avatarURL, let updateUrl = URL(string: profileImageURL) else {
-            print("Ошибка: avatarURL отсутствует или невалидный")
+            print("❌ Ошибка: avatarURL отсутствует или невалидный")
             return
         }
         print("Обновляем аватар: \(updateUrl.absoluteString)")
@@ -172,8 +179,41 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private func resetToDefaultProfileData() {
+        let cleanURL: URL? = nil
+        self.avatarImageView.kf.setImage(with: cleanURL, placeholder: UIImage(named: "PlaceholderAvatar"))
+        
+        DispatchQueue.main.async {
+            let defaultImage = UIImage(named: "Photo")
+            let defaultName = "Екатерина Новикова"
+            let defaultLoginName = "@ekaterina_nov"
+            let defaultDescription = "Hello, world!"
+            
+            self.avatarImageView.image = defaultImage
+            self.nameLabel.text = defaultName
+            self.loginNameLabel.text = defaultLoginName
+            self.descriptionLabel.text = defaultDescription
+        }
+    }
+    
     //MARK: - Action
     @objc private func didTapLogoutButton() {
-        //TO DO: code
+        print("Logout button tapped")
+        let alertmodel = AlertModel(title: "Пока, пока!",
+                                    message: "Уверены что хотите выйти?",
+                                    buttonText: "Нет",
+                                    completion: nil,
+                                    secondButtonText: "Да",
+                                    secondButtonCompletion: {
+            self.resetToDefaultProfileData()
+            ProfileLogoutService.shared.logout()
+
+            let splashViewController = SplashViewController()
+            if let window = UIApplication.shared.windows.first {
+                window.rootViewController = splashViewController
+                window.makeKeyAndVisible()
+            }
+        })
+        errorAlert.showAlert(with: alertmodel)
     }
 }

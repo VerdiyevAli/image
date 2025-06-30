@@ -1,3 +1,10 @@
+//
+//  ProfileImageService.swift
+//  ImageFeed
+//
+//  Created by Алина on 09.03.2025.
+//
+
 import Foundation
 import Kingfisher
 
@@ -19,10 +26,10 @@ final class ProfileImageService {
     //MARK: - Private Method
     func makeProfileImageRequest(username: String, token: String) -> Result<URLRequest, OAuthTokenRequestError> {
         guard let url = URL(string: "users/\(username)", relativeTo: Constants.defaultBaseURL) else {
-            print("Ошибка: Неверный URL ProfileImageRequest")
-            return .failure(.invalidBaseURL)
+            print("❌ Ошибка: Неверный URL ProfileImageRequest")
+            return.failure(.invalidBaseURL)
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -39,7 +46,7 @@ final class ProfileImageService {
         isFetching = true
         
         guard let token = oAuth2TokenStorage.token else {
-            print("Ошибка: Токен отсутствует")
+            print("❌ Ошибка: Токен отсутствует")
             completion(.failure(.missingToken))
             isFetching = false
             return
@@ -47,7 +54,7 @@ final class ProfileImageService {
         
         switch makeProfileImageRequest(username: username, token: token){
         case .failure(let error):
-            print("Ошибка создания запроса makeProfileImageRequest: \(error)")
+            print("❌ Ошибка создания запроса makeProfileImageRequest: \(error)")
             completion(.failure(.urlRequestError(error)))
             isFetching = false
             
@@ -60,12 +67,12 @@ final class ProfileImageService {
                     print("JSON response: \(String(describing: result))")
                     switch result {
                     case .success(let userResult):
-                        print("Успешный ответ от API: \(userResult)")
+                        print("✅ Успешный ответ от API: \(userResult)")
                         
                         print("JSON profileImage: \(String(describing: userResult.profileImage))")
                         
                         guard let profileImageURL = userResult.profileImage?.small else {
-                            print("Ошибка: profileImage отсутствует в ответе API")
+                            print("❌ Ошибка: profileImage отсутствует в ответе API")
                             completion(.failure(.invalidResponseData))
                             return
                         }
@@ -80,10 +87,11 @@ final class ProfileImageService {
                             userInfo: ["URL": profileImageURL]
                         )
                         
+                        self.avatarURL = profileImageURL
                         completion(.success(profileImageURL))
                         
                     case .failure(let error):
-                        print("Ошибка сети makeProfileImageRequest: \(error.localizedDescription)")
+                        print("❌ Ошибка сети makeProfileImageRequest: \(error.localizedDescription)")
                         completion(.failure(.urlRequestError(error)))
                     }
                 }

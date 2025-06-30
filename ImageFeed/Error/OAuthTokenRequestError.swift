@@ -1,3 +1,10 @@
+//
+//  OAuthTokenRequestError.swift
+//  ImageFeed
+//
+//  Created by Алина on 22.03.2025.
+//
+
 //MARK: - Enums
 enum OAuthTokenRequestError: Error {
     case invalidBaseURL
@@ -12,4 +19,9 @@ enum NetworkError: Error {
     case invalidResponseData
     case missingToken
     case requestFailed
+}
+
+enum ImagesListServiceError: Error {
+    case missingToken
+    case urlRequestError(Error)
 }

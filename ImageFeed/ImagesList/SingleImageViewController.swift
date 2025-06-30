@@ -1,12 +1,21 @@
+//
+//  SingleImageViewController.swift
+//  ImageFeed
+//
+//  Created by Алина on 03.02.2025.
+//
+
 import UIKit
+import ProgressHUD
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
     // MARK: - Public properties
-    var image: UIImage? {
+    var image: Photo? {
         didSet {
             guard isViewLoaded, let image = image else { return }
-            updateImage(image)
+            updateImage(from: image.largeImageURL)
         }
     }
     
@@ -47,11 +56,14 @@ final class SingleImageViewController: UIViewController {
         return button
     }()
     
+    private lazy var errorAlert = AlertPresenter(viewController: self)
     private var initialZoomScale: CGFloat = 1.0
+    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .ypLightBlack
         setupViewConstraints()
         
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didDoubleTapImage))
@@ -60,9 +72,9 @@ final class SingleImageViewController: UIViewController {
         imageView.isUserInteractionEnabled = true
         
         guard let image = image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
+        updateImage(from: image.largeImageURL)
+        
+        
     }
     
     // MARK: - Private Methods
@@ -118,32 +130,52 @@ final class SingleImageViewController: UIViewController {
         scrollView.contentInset = UIEdgeInsets(top: y, left: x, bottom: y, right: x)
     }
     
-    private func updateImage(_ image: UIImage) {
-        imageView.image = image
-        rescaleAndCenterImageInScrollView(image: image)
+    private func updateImage(from url: URL) {
+        UIBlockingProgressHUD.show()
+        
+        let placeholderImage = UIImage(named: "placeholder")
+        imageView.contentMode = .center
+        
+        imageView.kf.setImage(with: url, placeholder: placeholderImage) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let imageResult):
+                self.imageView.contentMode = .scaleAspectFill
+                self.imageView.image = imageResult.image
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure(let error):
+                let alertModel = AlertModel(title: "Ошибка",
+                                            message: "Не удалось загрузить изображение",
+                                            buttonText: "Ok",
+                                            completion: { self.navigationController?.popViewController(animated: true)},
+                                            secondButtonText: nil,
+                                            secondButtonCompletion: nil)
+                
+                errorAlert.showAlert(with: alertModel)
+                print("Ошибка загрузки изображения: \(error)")
+            }
+        }
     }
     
-    @objc
-    private func didDoubleTapImage() {
+    @objc private func didDoubleTapImage() {
         scrollView.setZoomScale(initialZoomScale, animated: true)
         centerImageIfNeeded()
     }
     
-    @objc
-    private func didTapBackButton() {
+    @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
     
-    
-    @objc
-    private func didTapShareButton(_ sender: Any) {
+    @objc private func didTapShareButton(_ sender: Any) {
         guard let image else { return }
         let share = UIActivityViewController(
             activityItems: [image],
             applicationActivities: nil
         )
-        present(share, animated: true, completion: nil)    }
-    
+        present(share, animated: true)
+    }
 }
 
 // MARK: - UIScrollViewDelegate

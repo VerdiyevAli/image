@@ -1,3 +1,10 @@
+//
+//  AlertPresenter.swift
+//  ImageFeed
+//
+//  Created by Алина on 22.03.2025.
+//
+
 import UIKit
 
 final class AlertPresenter: AlertPresenterProtocol {
@@ -7,17 +14,24 @@ final class AlertPresenter: AlertPresenterProtocol {
     init(viewController: UIViewController) {
         self.viewController = viewController
     }
-   
+    
     func showAlert(with model: AlertModel) {
         let alert = UIAlertController (title: model.title,
                                        message: model.message,
                                        preferredStyle: .alert)
         
-        let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
+        let actionOne = UIAlertAction(title: model.buttonText, style: .default) { _ in
             model.completion?()
         }
+        alert.addAction(actionOne)
         
-        alert.addAction(action)
+        if model.hasSecondButton {
+            let actionTwo = UIAlertAction(title: model.secondButtonText, style: .cancel) { _ in
+                model.secondButtonCompletion?()
+            }
+            alert.addAction(actionTwo)
+        }
+        
         viewController?.present(alert, animated: true, completion: nil)
         
 #if DEBUG

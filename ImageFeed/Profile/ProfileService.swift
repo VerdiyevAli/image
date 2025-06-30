@@ -1,3 +1,10 @@
+//
+//  ProfileService.swift
+//  ImageFeed
+//
+//  Created by Алина on 02.03.2025.
+//
+
 import Foundation
 
 final class ProfileService {
@@ -17,8 +24,8 @@ final class ProfileService {
     func makeProfileRequest(token: String) -> Result<URLRequest, OAuthTokenRequestError> {
         
         guard let url = URL(string: "me", relativeTo: Constants.defaultBaseURL) else {
-            print("Ошибка: Неверный URL ProfileRequest")
-            return .failure(.invalidBaseURL)
+            print("❌ Ошибка: Неверный URL ProfileRequest")
+            return.failure(.invalidBaseURL)
         }
         
         var request = URLRequest(url: url)
@@ -37,7 +44,7 @@ final class ProfileService {
         isFetching = true
         
         guard let token = oAuth2TokenStorage.token else {
-            print("Ошибка: Токен отсутствует")
+            print("❌ Ошибка: Токен отсутствует")
             completion(.failure(NetworkError.missingToken))
             isFetching = false
             return
@@ -45,8 +52,7 @@ final class ProfileService {
         
         switch makeProfileRequest(token: token){
         case .failure(let error):
-            print("Ошибка создания запроса makeProfileRequest: \(error)")
-            completion(.failure(.urlRequestError(error)))
+            print("❌ Ошибка создания запроса makeProfileRequest: \(error)")
             isFetching = false
         case .success(let request):
             let task = urlSession.objectTask(for: request){ [weak self] (result: Result<ProfileResult, Error>) in
@@ -64,14 +70,14 @@ final class ProfileService {
                         ProfileImageService.shared.fetchProfileImageURL(username: profile.userName) { result in
                             switch result {
                             case .success(let avatarURL):
-                                print("Аватар успешно загружен: \(avatarURL)")
+                                print("✅ Аватар успешно загружен: \(avatarURL)")
                             case .failure(let error):
-                                print("Ошибка загрузки аватара: \(error)")
+                                print("❌ Ошибка загрузки аватара: \(error)")
                             }
                         }
                         
                     case .failure(let error):
-                        print("Ошибка сети makeProfileRequest: \(error.localizedDescription)")
+                        print("❌ Ошибка сети makeProfileRequest: \(error.localizedDescription)")
                         completion(.failure(.urlRequestError(error)))
                     }
                 }
