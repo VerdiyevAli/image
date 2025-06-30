@@ -1,5 +1,6 @@
 import UIKit
 
+//
 final class ImagesListCell: UITableViewCell {
     
     // MARK: - Private properties
