@@ -1,7 +1,7 @@
 import Foundation
 
 final class OAuth2Service {
-    
+    //
     //MARK: - Static properties
     static let shared = OAuth2Service ()
     
