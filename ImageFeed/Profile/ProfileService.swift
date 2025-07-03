@@ -46,7 +46,7 @@ final class ProfileService {
         switch makeProfileRequest(token: token){
         case .failure(let error):
             print("Ошибка создания запроса makeProfileRequest: \(error)")
-            completion(.failure(.urlRequestError(error)))
+            completion(.failure(.requestFailed))
             isFetching = false
         case .success(let request):
             let task = urlSession.objectTask(for: request){ [weak self] (result: Result<ProfileResult, Error>) in

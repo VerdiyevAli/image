@@ -37,8 +37,8 @@ final class SplashViewController: UIViewController {
         NSLayoutConstraint.activate([
             splashImage.widthAnchor.constraint(equalToConstant: 72),
             splashImage.heightAnchor.constraint(equalToConstant: 75),
-            splashImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 228),
-            splashImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+            splashImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            splashImage.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     

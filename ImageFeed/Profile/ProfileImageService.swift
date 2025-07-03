@@ -48,7 +48,7 @@ final class ProfileImageService {
         switch makeProfileImageRequest(username: username, token: token){
         case .failure(let error):
             print("Ошибка создания запроса makeProfileImageRequest: \(error)")
-            completion(.failure(.urlRequestError(error)))
+            completion(.failure(.requestFailed))
             isFetching = false
             
         case .success(let request):
