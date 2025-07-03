@@ -36,7 +36,6 @@ final class AuthViewController: UIViewController {
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypLightBlack
         setupUI()
         navigationItem.hidesBackButton = true
     }
@@ -54,8 +53,8 @@ final class AuthViewController: UIViewController {
         NSLayoutConstraint.activate([
             logoOfUnsplashImageView.heightAnchor.constraint(equalToConstant: 60),
             logoOfUnsplashImageView.widthAnchor.constraint(equalToConstant: 60),
-            logoOfUnsplashImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            logoOfUnsplashImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            logoOfUnsplashImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 236),
+            logoOfUnsplashImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 157)
         ])
     }
     
@@ -66,7 +65,7 @@ final class AuthViewController: UIViewController {
             activeButton.heightAnchor.constraint(equalToConstant: 48),
             activeButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             activeButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            activeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90)
+            activeButton.topAnchor.constraint(equalTo: logoOfUnsplashImageView.bottomAnchor, constant: 300)
         ])
     }
     
@@ -103,13 +102,11 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 OAuth2TokenStorage.storage.token = token
                 self.delegate?.didAuthenticate(self)
             case .failure(let error):
-                print("❌ Ошибка получения токена: \(error)")
+                print("Ошибка получения токена: \(error)")
                 let alertModel = AlertModel(title: "Что-то пошло не так(",
                                             message: "Не удалось войти в систему",
                                             buttonText: "OK",
-                                            completion: nil,
-                                            secondButtonText: nil,
-                                            secondButtonCompletion: nil)
+                                            completion: nil)
                 errorAlert.showAlert(with: alertModel)
             }
             UIBlockingProgressHUD.dismiss()

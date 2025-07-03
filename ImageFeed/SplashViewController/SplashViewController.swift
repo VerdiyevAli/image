@@ -58,8 +58,7 @@ final class SplashViewController: UIViewController {
             print("Токен отсутствует, переход на AuthViewController")
             let authViewController = AuthViewController()
             authViewController.delegate = self
-            authViewController.modalPresentationStyle = .fullScreen
-            present(authViewController, animated: true)
+            navigationController?.pushViewController(authViewController, animated: true)
         }
     }
     
@@ -90,13 +89,11 @@ final class SplashViewController: UIViewController {
                 }
                 self.switchToTabBarController()
             case .failure(let error):
-                print("❌ Ошибка при загрузке профиля: \(error)")
+                print("Ошибка при загрузке профиля: \(error)")
                 let alertModel = AlertModel(title: "Ошибка",
                                             message: "Не удалось загрузить профиль: \(error.localizedDescription)",
                                             buttonText: "OK",
-                                            completion: nil,
-                                            secondButtonText: nil,
-                                            secondButtonCompletion: nil)
+                                            completion: nil)
                 showErrorAlert.showAlert(with: alertModel)
             }
         }

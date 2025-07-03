@@ -17,8 +17,8 @@ final class OAuth2Service {
     //MARK: Private methods
     func makeOAuthTokenRequest(code: String) -> Result<URLRequest, OAuthTokenRequestError> {
         guard let baseURL = URL(string: "https://unsplash.com") else {
-            print("❌ Ошибка: Неверный базовый URL")
-            return.failure(.invalidBaseURL)
+            print("Ошибка: Неверный базовый URL")
+            return .failure(.invalidBaseURL)
         }
         guard let url = URL(
             string: "/oauth/token"
@@ -29,13 +29,13 @@ final class OAuth2Service {
             + "&&grant_type=authorization_code",
             relativeTo: baseURL
         ) else {
-            print("❌ Ошибка: Неверный URL")
-            return.failure(.invalidURL)
+            print("Ошибка: Неверный URL")
+            return .failure(.invalidURL)
         }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        return.success(request)
+        return .success(request)
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -62,7 +62,7 @@ final class OAuth2Service {
                         self.oAuth2TokenStorage.token = response.accessToken
                         completion(.success(response.accessToken))
                     case .failure(let error):
-                        print("❌ Ошибка сети: \(error.localizedDescription)")
+                        print("Ошибка сети: \(error.localizedDescription)")
                         completion(.failure(error))
                     }
                     self.task = nil
@@ -72,8 +72,8 @@ final class OAuth2Service {
             self.task = task
             task.resume()
             
-        case.failure(let error):
-            print("❌ Ошибка создания запроса fetchOAuthToken: \(error)")
+        case .failure(let error):
+            print("Ошибка создания запроса fetchOAuthToken: \(error)")
             completion(.failure(error))
         }
     }
@@ -96,14 +96,14 @@ extension URLSession {
                     if let responseString = String(data: data, encoding: .utf8) {
                         print("Ошибка: статус код \(statusCode), тело ответа: \(responseString)")
                     }
-                    print("❌ Ошибка: статус код \(statusCode)")
+                    print("Ошибка: статус код \(statusCode)")
                     fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
                 }
             } else if let error = error {
-                print("❌ Ошибка URL запроса: \(error.localizedDescription)")
+                print("Ошибка URL запроса: \(error.localizedDescription)")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
             } else {
-                print("❌ Ошибка: неизвестная ошибка URLSession")
+                print("Ошибка: неизвестная ошибка URLSession")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
             }
         })
@@ -120,7 +120,7 @@ extension URLSession {
                     let decodedObject = try decoder.decode(T.self, from: data)
                     completion(.success(decodedObject))
                 } catch {
-                    print("❌ Ошибка декодирования: \(error.localizedDescription), Данные: \(String(data: data, encoding: .utf8) ?? "")")
+                    print("Ошибка декодирования: \(error.localizedDescription), Данные: \(String(data: data, encoding: .utf8) ?? "")")
                     completion(.failure(error))
                 }
             case .failure(let error):

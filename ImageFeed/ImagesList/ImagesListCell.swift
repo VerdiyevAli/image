@@ -1,37 +1,26 @@
 import UIKit
-import Kingfisher
 
-
-final class ImagesListCell: UITableViewCell, ImagesListCellProtocol {
-    
-    weak var delegate: ImagesListCellDelegate?
-    
-    var imageURL: URL?
+//
+final class ImagesListCell: UITableViewCell {
     
     // MARK: - Private properties
-    private(set) var cellImage: UIImageView = {
+    private lazy var cellImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 16
         imageView.layer.masksToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private(set) var likeButton: UIButton = {
-        let likeButton = UIButton(type: .custom)
-        likeButton.addTarget(nil, action: #selector(didTapLikeButton), for: .touchUpInside)
-        likeButton.isHidden = true
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
+    private lazy var likeButton: UIButton = {
+        let likeButton = UIButton()
         return likeButton
     }()
     
-    private(set) var dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textColor = .ypWhite
-        label.isHidden = true
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -40,12 +29,6 @@ final class ImagesListCell: UITableViewCell, ImagesListCellProtocol {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-    }
-    
-    override func prepareForReuse(){
-        super.prepareForReuse()
-        cellImage.kf.cancelDownloadTask()
-        cellImage.image = nil
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -62,11 +45,16 @@ final class ImagesListCell: UITableViewCell, ImagesListCellProtocol {
     }
     
     // MARK: - Private methods
+    private func addSubviews() {
+        [cellImage, likeButton, dateLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }
+    }
+    
     private func setupCell(){
         contentView.clipsToBounds = true
-        contentView.addSubview(cellImage)
-        contentView.addSubview(likeButton)
-        contentView.addSubview(dateLabel)
+        addSubviews()
         
         NSLayoutConstraint.activate([
             cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -88,44 +76,9 @@ final class ImagesListCell: UITableViewCell, ImagesListCellProtocol {
         contentView.backgroundColor = .ypLightBlack
     }
     
-    func setImage(from url: URL) {
-        cellImage.kf.cancelDownloadTask()
-        loadImage(from: url)
-    }
-    
-    private func loadImage(from url: URL) {
-        
-        cellImage.contentMode = .center
-        
-        let resource = KF.ImageResource(downloadURL: url, cacheKey: url.absoluteString)
-        
-        cellImage.kf.setImage(with: resource,
-                              placeholder: UIImage(named: "placeholder"),
-                              options: [.transition(.fade(0.3))]
-        ) { result in
-            switch result {
-            case .success(let imageResult):
-                self.likeButton.isHidden = false
-                self.dateLabel.isHidden = false
-                self.cellImage.contentMode = .scaleAspectFill
-                self.cellImage.image = imageResult.image
-            case .failure(_):
-                self.cellImage.contentMode = .center
-                self.likeButton.isHidden = true
-                self.dateLabel.isHidden = true
-            }
-        }
-        cellImage.kf.indicatorType = .activity
-    }
-    
-    func setIsLiked(_ isLike: Bool) {
-        let likeImage = isLike ? UIImage(named: "Active") : UIImage(named: "No Active")
-        likeButton.setImage(likeImage, for: .normal)
-    }
-    
-    
-    @objc private func didTapLikeButton() {
-        delegate?.imageListCellDidTapLike(self)
+   func configureCellWithImage(image: UIImage, likeButtonImage: UIImage?, date: String) {
+        cellImage.image = image
+        likeButton.setImage(likeButtonImage, for: .normal)
+        dateLabel.text = date
     }
 }
-
