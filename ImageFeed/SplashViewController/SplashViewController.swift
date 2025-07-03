@@ -19,7 +19,6 @@ final class SplashViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypLightBlack
         configureConstraintsSplashImage()
-        handleAuthorizationFlow()
     }
     
     // MARK: - Override methods
@@ -42,18 +41,10 @@ final class SplashViewController: UIViewController {
         ])
     }
     
-    private func handleAuthorizationFlow() {
-        if let token = storage.token {
-            fetchProfile(token: token)
-        } else {
-            validateAuthorization()
-        }
-    }
-    
     private func validateAuthorization(){
-        if OAuth2TokenStorage.storage.token != nil {
-            print("Токен прошел авторизацию")
-            switchToTabBarController()
+        if let token = storage.token {
+            print("Токен найден, загружаем профиль")
+            fetchProfile(token: token)
         } else {
             print("Токен отсутствует, переход на AuthViewController")
             let authViewController = AuthViewController()
@@ -61,7 +52,7 @@ final class SplashViewController: UIViewController {
             navigationController?.pushViewController(authViewController, animated: true)
         }
     }
-    
+
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid window configuration")
@@ -83,18 +74,31 @@ final class SplashViewController: UIViewController {
             
             switch result {
             case .success(let profile):
-                let username = profile.userName
-                ProfileImageService.shared.fetchProfileImageURL(username: username) { _ in
-                    print("fetchProfileImageURL завершился с результатом: \(result)")
+                print("Профиль успешно загружен: \(profile.userName)")
+                // Запускаем загрузку аватара
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.userName) { result in
+                    switch result {
+                    case .success(let avatarURL):
+                        print("Аватар успешно загружен: \(avatarURL)")
+                    case .failure(let error):
+                        print("Ошибка загрузки аватара: \(error)")
+                    }
                 }
                 self.switchToTabBarController()
             case .failure(let error):
                 print("Ошибка при загрузке профиля: \(error)")
-                let alertModel = AlertModel(title: "Ошибка",
-                                            message: "Не удалось загрузить профиль: \(error.localizedDescription)",
-                                            buttonText: "OK",
-                                            completion: nil)
-                showErrorAlert.showAlert(with: alertModel)
+                // Если ошибка связана с токеном, очищаем его и переходим на авторизацию
+                if case .httpStatusCode(let statusCode) = error, statusCode == 401 {
+                    print("Токен недействителен, очищаем и переходим на авторизацию")
+                    self.storage.token = nil
+                    self.validateAuthorization()
+                } else {
+                    let alertModel = AlertModel(title: "Что-то пошло не так(",
+                                                message: "Не удалось войти в систему",
+                                                buttonText: "OK",
+                                                completion: nil)
+                    self.showErrorAlert.showAlert(with: alertModel)
+                }
             }
         }
     }

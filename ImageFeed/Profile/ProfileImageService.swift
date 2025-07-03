@@ -84,7 +84,11 @@ final class ProfileImageService {
                         
                     case .failure(let error):
                         print("Ошибка сети makeProfileImageRequest: \(error.localizedDescription)")
-                        completion(.failure(.urlRequestError(error)))
+                        if let networkError = error as? NetworkError {
+                            completion(.failure(networkError))
+                        } else {
+                            completion(.failure(.urlRequestError(error)))
+                        }
                     }
                 }
             }
