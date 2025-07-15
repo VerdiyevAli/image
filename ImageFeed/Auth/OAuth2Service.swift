@@ -131,6 +131,3 @@ extension URLSession {
     }
     
 }
-
-
-// проект готов к сдаче
